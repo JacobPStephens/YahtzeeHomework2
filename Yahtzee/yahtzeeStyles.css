@@ -1,0 +1,108 @@
+* {
+	font-family: Helvetica, Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	background-color: hsl(250, 98%, 95%);
+}
+
+body {
+	user-select: none;
+}
+
+.header {
+	font-style: bold;
+	font-size: 100px;
+	text-align: center;
+	vertical-align: center;
+	text-shadow: hsl(204, 84%, 34%) 5px 0px;
+	background-color: hsl(250, 98%, 100%);
+	margin-bottom: 30px;
+}
+
+.highScore {
+	font-weight: bold;
+}
+
+.d1 {
+	width: 75px;
+}
+.d2 {
+	width: 75px;
+}
+.d3 {
+	width: 75px;
+}
+.d4 {
+	width: 75px;
+}
+.d5 {
+	width: 75px;
+}
+
+.scoreNums {
+	font-size: 12pt;
+	text-align: right;
+	font-weight: bold;
+
+	width: 30%;
+	height: 40px;
+	padding-right: 10px;
+
+}
+.scoreBox {
+	background-color: hsl(204, 68%, 65%); /*hsl(197, 57%, 78%); */
+
+	font-size: 16pt;
+	width: 10%;
+	min-width: 30px;
+	text-align: center;
+
+	font-weight: bold;
+}
+
+.dice {
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 50px;
+	
+}
+
+.scoresheet {
+	margin-left: 20%;
+}
+
+.scoreBox {
+	border-color: black;
+	border-width: 4px;
+}
+
+
+.rollTD {
+	padding-left: 350px;
+	padding-right:50px;
+
+}
+
+
+.roll{
+	background-color: #7e4aa1;
+	color: white;
+	font-size: 14pt;
+	font-weight: bold;
+	width: 100px;
+	height: 50px;
+	border-radius: 12px;
+	border-width: 4px;
+
+}
+
+
+.newGame {
+	background-color: #F0F8FF;
+	font-size: 14pt;
+	font-weight: bold;
+	width: 100px;
+	height: 50px;
+	border-radius: 12px;
+	border-width: 4px;
+}

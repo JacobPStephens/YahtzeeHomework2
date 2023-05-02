@@ -1,0 +1,266 @@
+<!-- 
+    Name: Jacob Stephens
+    Course: CSC-235
+    Homework: #2 
+    Git-Hub
+-->
+<!DOCTYPE html>
+
+<head> <link rel="stylesheet" href="yahtzeeStyles.css"> <title>Yahtzee</title> 
+
+</head>
+
+<body>
+
+    <div class = "header"> 
+        Yahtzee
+    </div>
+
+    <table class = "dice">
+        <tr>
+            <td> <img class = "d1" src="pictures/dice0.gif"> </td>
+            <td> <img class = "d2" src="pictures/dice0.gif"> </td>
+            <td> <img class = "d3" src="pictures/dice0.gif"> </td>
+            <td> <img class = "d4" src="pictures/dice0.gif"> </td> 
+            <td> <img class = "d5" src="pictures/dice0.gif"> </td>
+        </tr>
+    </table>
+
+    <table class = "scoresheet">
+        <tr>
+            <td class = "scoreNums"> 1s </td>  <td class = "scoreBox s1"></td>
+           
+        </tr>
+        <tr>
+            <td class = "scoreNums"> 2s </td>  <td class = "scoreBox s2"></td> 
+            <td class = "rollTD"> <button class = "roll" type = "button"> Roll </button> </td>
+        </tr>
+        <tr>
+
+            <td class = "scoreNums"> 3s </td>  <td class = "scoreBox s3"></td> 
+        </tr>
+        <tr>
+            <td class = "scoreNums"> 4s </td>  <td class = "scoreBox s4"></td>
+        </tr>
+        <tr>
+            <td class = "scoreNums"> 5s </td>  <td class = "scoreBox s5"></td>
+            <td class = "rollTD"> <button class = "newGame"> New Game </button> </td>
+        </tr>
+        <tr>
+            <td class = "scoreNums"> 6s </td>  <td class = "scoreBox s6"> </td>
+        </tr>
+        <tr>
+            <td class = "scoreNums"> 3 of a Kind </td>  <td class = "scoreBox 3k"></td>
+        </tr>
+        <tr>
+            <td class = "scoreNums"> 4 of a Kind </td>  <td class = "scoreBox 4k">  </td>
+        </tr>
+        <tr>
+            <td class = "scoreNums"> Yahtzee </td>  <td class = "scoreBox 5k">  </td>
+        </tr>
+        <tr>
+            <td class = "scoreNums"> Total </td>  <td class = "scoreBox total">  </td>
+        </tr>
+        <tr> 
+            <td rowspan = "2" class  = "highScore"></td>
+        </tr>
+    </table>
+
+    <script language = "JavaScript">
+        
+        let highScore = 0;
+        const diceArray = [0, 0, 0, 0, 0];
+        const f = [9999, 0, 0, 0, 0, 0, 0]; // frequency
+        f[1] = 0; f[2] = 0; f[3] = 0; f[4] = 0; f[5] = 0; f[6] = 0;
+        const locked = [false, false, false, false, false, false, false, false, false];
+        const scores = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // scoresheet
+        const toggleList = [false, false, false, false, false] // flags
+        let rollsLeft = 3;
+        let totalScore = 0;
+        let hasLocked = false;
+
+        // activated when roll button clicked
+        // updates dice values and pictures accordingly
+        function rollDice() {
+            
+            if (hasLocked) {
+                hasLocked = !hasLocked;
+            }
+
+            if (rollsLeft > 0) {
+                for (let i = 0; i < 5; i++) {
+                    if (toggleList[i] == false) {
+                        let num = Math.floor(Math.random() * 6) + 1;
+                            diceArray[i] = num;
+                            
+                        updatePictures();
+                        
+                    }
+                }
+            }
+            
+            rollsLeft -= 1;
+            calcFrequency();
+
+        }
+
+        // calculates frequency of each number where f[3] is how many times 3 appears in current dice
+        function calcFrequency() {
+            f.fill(0);
+            for (num of diceArray) {
+                f[num]++;
+
+            }
+        }
+
+        // updates pictures of dice according to dice values array
+        function updatePictures() {
+            for (let i = 1; i <= 5; i++) {
+                if (toggleList[i-1] == false) {
+                    document.querySelector(".d" + i.toString()).src = `pictures/dice${diceArray[i-1]}.gif`;
+                }
+            }
+        }
+
+        // call functions according to according event
+        const scoreBoxes = document.querySelectorAll(".scoreBox");
+        for (const [i, box] of scoreBoxes.entries())  {
+            if (box.classList.contains("total")) continue;
+
+            box.addEventListener("mouseover", (over) => {calculateScore(i, box)})
+            
+            box.addEventListener("mouseout", (out) => {hideTotal(i, box)})
+
+            box.addEventListener("click", (click) => {lockScore(i, box)})
+            
+        }
+
+        // calculates and shows prospective score upon mouseover
+        function calculateScore(i, box) {
+           
+            if (!locked[i]) {
+                let total = 0;
+               
+                for (let j = 1; j <= 6; ++j) {
+                    // general scoring
+                    if (box.classList.contains(`s${j}`)) {
+                       for (let i = 0; i < 5; ++i) {
+                           if (diceArray[i] == j) {
+                               total += j
+                           }
+                       }
+                   }
+                    // special scoring (kinds)
+                    else if (box.classList.contains(`${j}k`)) {
+                        if (j < 3 || j == 6){
+                           continue;
+                        }
+                        for (let i = 1; i <= 6; ++i) {
+                           // yahtzee
+                            if (f[i] == 5 && j == 5) {
+                               total = i * 5;
+                           }
+                           // 4k 
+                            else if (f[i] >= 4 && j == 4) {
+                                let sum = 0;
+                                for (dice of diceArray) {
+                                   sum += dice;
+                                }
+                                total = sum;
+                            }
+                            // 3k
+                            else if (f[i] >= 3 && j == 3) {
+                                let sum = 0;
+                                for (dice of diceArray) {
+                                    sum += dice;
+                                }
+                                total = sum;
+                            }
+                        }                      
+                    }
+                }
+                   box.innerHTML = total;
+            }
+        }
+        // hides score (if not locked in already)
+        function hideTotal(i, box) {
+            if (!locked[i]){
+                box.innerHTML = "";
+            }
+        }
+
+        // locks in score
+        function lockScore(i, box) {
+            console.log('heree');
+            if (!locked[i] && !hasLocked) {
+
+                totalScore += parseInt(box.innerHTML);
+                document.querySelector(".scoreBox.total").innerHTML = totalScore;
+
+                for (let i = 0; i < 5; i++) {
+                    toggleList[i] = false;
+                    diceArray[i] = 0;
+                    updatePictures();
+                
+                }
+                locked[i] = true;
+                hasLocked = true;
+                rollsLeft = 3;
+            }
+        }
+        
+        // lock dice upon click
+        for (let i = 1; i < 6; ++i) {
+            document.querySelector(`.d${i}`).addEventListener("click", (click) => {
+                if (diceArray[i-1] == 0) {
+                    return;
+                }
+                    
+                toggleList[i-1] = !toggleList[i-1]
+                
+                if (toggleList[i-1] == true) {
+                    click.target.src = `pictures/diceX${diceArray[i-1]}.gif`
+                }
+                else {
+                    click.target.src = `pictures/dice${diceArray[i-1]}.gif`
+
+                }   
+            })    
+        }
+
+        // reset game and log high score (not in assignment)
+        function newGame() {
+            if (totalScore > highScore) highScore = totalScore;
+            console.log('here!!')
+            rollsLeft = 3;
+            totalScore = 0;
+            hasLocked = false;
+            f.fill(0); 
+            diceArray.fill(0);
+            toggleList.fill(false);
+            scores.fill(0);
+            locked.fill(false);
+
+            updatePictures();
+
+            for (let box of scoreBoxes) {
+                box.innerHTML = "";
+            }
+
+            document.querySelector(".highScore").innerHTML = "High Score: " + highScore;
+
+        }
+
+        // roll dice button event listener
+        const rollButton = document.querySelector(".roll");
+        rollButton.addEventListener("click", rollDice);
+
+        // new game button event listener
+        const newGameButton = document.querySelector(".newGame");
+        newGameButton.addEventListener("click", newGame);
+        
+    </script>
+
+</body>
+
+</html>
